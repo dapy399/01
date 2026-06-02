@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+nest-serve/node_modules/
+project-user/node_modules/
+project-wx/node_modules/
+
+# Production builds
+project-user/dist/
+nest-serve/dist/
+
+# Environment variables
+.env
+nest-serve/.env
+project-user/.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-data/

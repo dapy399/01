@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # MongoDB 数据库
+  mongodb:
+    image: mongo:6.0
+    container_name: ai-medical-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: nest_server_db
+    networks:
+      - ai-medical-network
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ai-medical-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-medical-network
+
+  # 后端服务
+  backend:
+    build:
+      context: ./nest-serve
+      dockerfile: Dockerfile
+    container_name: ai-medical-backend
+    restart: always
+    ports:
+      - "7005:7005"
+    environment:
+      - NODE_ENV=production
+      - PORT=7005
+      - MONGODB_URI=mongodb://mongodb:27017/nest_server_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
+      - PASSWORD_KEY=${PASSWORD_KEY}
+      - TONGYI_AKI_KEY=${TONGYI_AKI_KEY}
+      - MILVUS_ADDRESS=${MILVUS_ADDRESS}
+      - MILVUS_TOKEN=${MILVUS_TOKEN}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - BING_SEARCH_API_KEY=${BING_SEARCH_API_KEY}
+      - IMAGE_BASE_URL_local=${IMAGE_BASE_URL_local}
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE=10485760
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - ai-medical-network
+
+  # 前端服务（Nginx）
+  frontend:
+    build:
+      context: ./project-user
+      dockerfile: Dockerfile
+    container_name: ai-medical-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ai-medical-network
+
+volumes:
+  mongo_data:
+  redis_data:
+  uploads:
+
+networks:
+  ai-medical-network:
+    driver: bridge
