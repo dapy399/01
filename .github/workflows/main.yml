@@ -21,10 +21,10 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.ECS_PRIVATE_KEY }}" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
-        ssh-keyscan -H ${{ secrets.ECS_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H 121.43.149.193 >> ~/.ssh/known_hosts
     - name: Deploy backend
       run: |
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.ECS_USER }}@${{ secrets.ECS_HOST }} << 'EOF'
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@121.43.149.193 << 'EOF'
           cd /opt/ai-medical-rag && git pull origin main
           cd nest-serve && pnpm install --ignore-scripts && pnpm build
           if pm2 list | grep -q "ai-medical-backend"; then pm2 restart ai-medical-backend; else pm2 start dist/src/main.js --name ai-medical-backend; fi
@@ -33,7 +33,7 @@ jobs:
         EOF
     - name: Deploy frontend
       run: |
-        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r project-user/dist/* ${{ secrets.ECS_USER }}@${{ secrets.ECS_HOST }}:/var/www/ai-medical/
+        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r project-user/dist/* root@121.43.149.193:/var/www/ai-medical/
     - name: Reload Nginx
       run: |
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.ECS_USER }}@${{ secrets.ECS_HOST }} "sudo nginx -t && sudo systemctl reload nginx && echo 'Deploy complete!'"
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@121.43.149.193 "sudo nginx -t && sudo systemctl reload nginx && echo 'Deploy complete!'"
