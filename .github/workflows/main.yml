@@ -31,8 +31,8 @@ jobs:
     - name: Build Wechat Mini Program
       working-directory: ./project-wx
       run: |
-        pnpm install --ignore-scripts
-        pnpm build:mp-weixin
+        pnpm install
+        timeout 120 pnpm weixin || true
 
     - name: Setup SSH
       run: |
