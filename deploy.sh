@@ -106,7 +106,7 @@ if pm2 list | grep -q "ai-medical-backend"; then
     pm2 restart ai-medical-backend
     echo -e "${GREEN}后端服务已重启${NC}"
 else
-    pm2 start dist/main.js --name ai-medical-backend
+    pm2 start dist/src/main.js --name ai-medical-backend
     echo -e "${GREEN}后端服务已启动${NC}"
 fi
 
