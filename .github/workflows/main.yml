@@ -1,90 +1,47 @@
 name: Deploy to Alibaba Cloud ECS
-
 on:
   push:
-    branches: [ main ]
-
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 9
-
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with: {node-version: '22'}
+    - uses: pnpm/action-setup@v3
+      with: {version: 9}
     - name: Build frontend
       working-directory: ./project-user
       run: |
         pnpm install --ignore-scripts
         pnpm build
-
     - name: Deploy backend
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.2.1
       with:
         host: ${{ secrets.ECS_HOST }}
         username: ${{ secrets.ECS_USER }}
-        key: ${{ secrets.ECS_PRIVATE_KEY }}
+        password: ${{ secrets.ECS_PASSWORD }}
         script: |
-          set -e
-          echo "========================================"
-          echo "  开始部署后端"
-          echo "========================================"
-          
-          BACKEND_DIR="/opt/ai-medical-rag/nest-serve"
-          
-          echo "[1/3] 拉取最新代码..."
-          cd /opt/ai-medical-rag
-          git pull origin main
-          
-          echo "[2/3] 安装依赖并编译..."
-          cd $BACKEND_DIR
-          pnpm install --ignore-scripts
-          pnpm build
-          
-          echo "[3/3] 重启服务..."
-          if pm2 list | grep -q "ai-medical-backend"; then
-            pm2 restart ai-medical-backend
-            echo "服务已重启"
-          else
-            pm2 start dist/src/main.js --name ai-medical-backend
-            pm2 save
-            echo "服务已启动"
-          fi
-          
-          echo "========================================"
-          echo "  后端部署完成！"
-          echo "========================================"
-
+          cd /opt/ai-medical-rag && git pull origin main
+          cd nest-serve && pnpm install --ignore-scripts && pnpm build
+          if pm2 list | grep -q "ai-medical-backend"; then pm2 restart ai-medical-backend; else pm2 start dist/src/main.js --name ai-medical-backend; fi
+          pm2 save
+          echo "Backend deployed"
     - name: Deploy frontend
-      uses: appleboy/scp-action@v0.1.7
+      uses: appleboy/scp-action@v0.1.8
       with:
         host: ${{ secrets.ECS_HOST }}
         username: ${{ secrets.ECS_USER }}
-        key: ${{ secrets.ECS_PRIVATE_KEY }}
+        password: ${{ secrets.ECS_PASSWORD }}
         source: "project-user/dist/*"
         target: "/var/www/ai-medical"
         strip_components: 2
         rm: true
-
     - name: Reload Nginx
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.2.1
       with:
         host: ${{ secrets.ECS_HOST }}
         username: ${{ secrets.ECS_USER }}
-        key: ${{ secrets.ECS_PRIVATE_KEY }}
-        script: |
-          echo "重启 Nginx..."
-          sudo nginx -t && sudo systemctl reload nginx
-          echo "========================================"
-          echo "  部署全部完成！"
-          echo "========================================"
+        password: ${{ secrets.ECS_PASSWORD }}
+        script: sudo nginx -t && sudo systemctl reload nginx && echo "Deploy complete!"
