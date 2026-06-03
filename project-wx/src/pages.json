@@ -27,18 +27,20 @@
     }
   ],
   "globalStyle": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "white",
     "navigationBarTitleText": "Ai医疗助手",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8",
+    "navigationBarBackgroundColor": "#161b22",
+    "backgroundColor": "#0d1117",
     "usingComponents": {
       "towxml": "/wxcomponents/towxml/towxml"
     }
   },
   "tabBar": {
     "custom": false,
-    "color": "#999999",
-    "selectedColor": "#007AFF",
+    "color": "#8b949e",
+    "selectedColor": "#00d4aa",
+    "backgroundColor": "#161b22",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",

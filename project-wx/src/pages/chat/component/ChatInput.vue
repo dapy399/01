@@ -14,7 +14,7 @@
     <!-- 输入框 -->
     <view class="user-input">
       <textarea
-        placeholder="请输入内容"
+        placeholder="请输入内容..."
         maxlength="500"
         :auto-height="autoHeight"
         style="width: 100%"
@@ -22,21 +22,32 @@
         :show-confirm-bar="false"
         @linechange="lineChange"
         v-model="userMessage"
+        placeholder-class="input-placeholder"
       ></textarea>
     </view>
-    <!-- 知识库按钮 -->
-    <view class="action-button">
-      <view @click="uploadFile">
-        <image src="/static/select.png" mode="widthFix"></image>
+    <!-- 功能按钮栏 -->
+    <view class="action-bar">
+      <!-- 左侧功能按钮 -->
+      <view class="action-left">
+        <!-- 上传文件 -->
+        <view class="action-icon-btn" @click="uploadFile">
+          <image src="/static/select.png" mode="widthFix"></image>
+        </view>
+        <!-- 知识库按钮 -->
+        <view class="toggle-btn" :class="{ active: isKnowledgeBased }" @click="toggleKnowledge">
+          <text>知识库</text>
+        </view>
+        <!-- 联网搜索按钮 -->
+        <view class="toggle-btn web-search-btn" :class="{ active: pinia.isWebSearch }" @click="toggleWebSearch">
+          <text>联网搜索</text>
+        </view>
       </view>
-      <view class="kb-button">
-        <button plain @click="queryKb">查询医学库</button>
-      </view>
-      <view>
-        <button plain class="user-send" @click="sendMessage" v-if="!pinia.disabledStatus">
+      <!-- 发送按钮 -->
+      <view class="send-btn-wrap">
+        <button plain class="send-btn" @click="sendMessage" v-if="!pinia.disabledStatus">
           <image src="/static/send-icon.png" mode="widthFix"></image>
         </button>
-        <button plain class="user-send" v-if="pinia.disabledStatus" @click="stopOutput">
+        <button plain class="send-btn stop-btn" v-if="pinia.disabledStatus" @click="stopOutput">
           <image src="/static/stop-icon.png" mode="widthFix"></image>
         </button>
       </view>
@@ -52,17 +63,19 @@ import { projectStore } from "@/store/index";
 import { validators } from "@/utils/validators";
 const pinia = projectStore();
 import { onShow } from "@dcloudio/uni-app";
+
 // 输入框自动增高
 const autoHeight = ref(true);
 // 输入框行数变化
 const lineChange = (event: { detail: { lineCount: number } }) => {
-  // console.log(event);
   autoHeight.value = event.detail.lineCount >= 4 ? false : true;
 };
+
 // 上传文件
 const uploadFile = async () => {
   await useFileUploader({ page: "chatinput", uploadApi: UploadDialogApi });
 };
+
 // 删除指定文件
 const deleteFile = async (docId: string, index: number) => {
   try {
@@ -74,27 +87,19 @@ const deleteFile = async (docId: string, index: number) => {
     uni.showToast({ title: "删除出错", icon: "none" });
   }
 };
-// 控制知识库选择
+
+// 知识库切换
 const isKnowledgeBased = ref(false);
-const queryKbStyle = reactive({
-  border: "#eceff3",
-  backgroundColor: "#ffffff",
-  color: "#d783af",
-});
-// 点击知识库按钮
-const queryKb = () => {
+const toggleKnowledge = () => {
   isKnowledgeBased.value = !isKnowledgeBased.value;
-  if (isKnowledgeBased.value) {
-    // 选中
-    queryKbStyle.backgroundColor = "#597CEE";
-    queryKbStyle.border = "#597CEE";
-    queryKbStyle.color = "#ffffff";
-  } else {
-    queryKbStyle.backgroundColor = "#ffffff";
-    queryKbStyle.border = "#eceff3";
-    queryKbStyle.color = "#d783af";
-  }
+  pinia.isKnowledgeBased = isKnowledgeBased.value;
 };
+
+// 联网搜索切换（与store同步）
+const toggleWebSearch = () => {
+  pinia.isWebSearch = !pinia.isWebSearch;
+};
+
 // 发送消息
 const userMessage = ref("");
 const sendMessage = () => {
@@ -112,7 +117,6 @@ const sendMessage = () => {
       loadingCircle: true,
     }
   );
-  console.log(pinia.messageList);
 
   // 禁用按钮
   pinia.disabledStatus = true;
@@ -122,23 +126,26 @@ const sendMessage = () => {
     pinia.chatListData.unshift({ sessionId: pinia.sessionId, content: userMessage.value.trim() });
     pinia.sessionIndex = 0;
   }
-  // 发送消息
+  // 发送消息（带上联网搜索参数）
   SendMessageApi({
     content: userMessage.value.trim(),
     sessionId: pinia.sessionId,
     uploadFileList: pinia.uploadFileItem,
     isKnowledgeBased: isKnowledgeBased.value,
+    isWebSearch: pinia.isWebSearch,
   });
   // 清空输入框和临时文件还有首页的问一问
   userMessage.value = "";
   pinia.uploadFileItem = [];
   pinia.homeAsk = "null";
 };
+
 // 终止模型输出
 const stopOutput = () => {
   console.log("终止");
   StopOutputApi({ sessionId: pinia.sessionId });
 };
+
 // 首页点击问一问触发
 onShow(() => {
   console.log(pinia.homeAsk);
@@ -151,22 +158,26 @@ onShow(() => {
 
 <style scoped>
 .chat-input {
-  background-color: #ffffff;
+  background-color: #161b22;
   position: fixed;
   left: 0;
   bottom: 0;
   right: 0;
-  padding: 0 10rpx 30rpx 10rpx;
+  padding: 0 24rpx 30rpx 24rpx;
+  border-top: 1rpx solid #30363d;
 }
+
+/* 文件列表 */
 .file-item {
   display: inline-flex;
-  border: 1rpx solid #f3f3f3;
+  border: 1rpx solid #30363d;
   padding: 7rpx 10rpx;
   border-radius: 10rpx;
   width: 270rpx;
   margin-right: 10rpx;
   position: relative;
   margin-top: 10rpx;
+  background-color: #21262d;
 }
 .file-icon image {
   width: 50rpx;
@@ -184,13 +195,14 @@ onShow(() => {
 }
 .file-name text:nth-child(1) {
   font-size: 25rpx;
+  color: #c9d1d9;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .file-name text:nth-child(2) {
   font-size: 20rpx;
-  color: #8d8ea5;
+  color: #8b949e;
 }
 .delete-file {
   width: 27rpx;
@@ -199,43 +211,71 @@ onShow(() => {
   bottom: 3rpx;
   right: 5rpx;
 }
+
+/* 输入框 */
 .user-input {
-  padding: 30rpx 0;
+  padding: 24rpx 0;
 }
-/* 按钮 */
-.action-button {
+.user-input textarea {
+  background-color: #21262d !important;
+  border: 1rpx solid #30363d !important;
+  border-radius: 16rpx !important;
+  padding: 20rpx 24rpx !important;
+  color: #e6edf3 !important;
+  font-size: 30rpx !important;
+  line-height: 1.6 !important;
+}
+:deep(.input-placeholder) {
+  color: #8b949e !important;
+}
+
+/* 功能按钮栏 */
+.action-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
-.action-button image {
+.action-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+}
+.action-icon-btn image {
+  width: 56rpx;
+  height: 56rpx;
+}
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  border-radius: 50rpx;
+  font-size: 24rpx;
+  border: 1rpx solid #30363d;
+  background-color: #21262d;
+  color: #8b949e;
+  transition: all 0.2s ease;
+}
+.toggle-btn.active {
+  background-color: rgba(0, 212, 170, 0.15);
+  border-color: #00d4aa;
+  color: #00d4aa;
+}
+.send-btn-wrap {
+  flex-shrink: 0;
+}
+.send-btn image,
+.stop-btn image {
   width: 63rpx;
+  height: 63rpx;
 }
+
+/* 全局按钮样式重置 */
 button {
   padding: inherit !important;
   margin: inherit !important;
   line-height: inherit !important;
   border: none !important;
   background: none !important;
-}
-.kb-button button {
-  padding: 10rpx 15rpx !important;
-  color: v-bind("queryKbStyle.color");
-  background-color: v-bind("queryKbStyle.backgroundColor") !important;
-  font-size: 28rpx;
-  border-radius: 50rpx;
-}
-/* 自定义边框 */
-.kb-button wx-button:after {
-  border: 2rpx solid v-bind("queryKbStyle.border");
-  border-radius: 50rpx;
-}
-.user-send {
-  width: 63rpx;
-  height: 63rpx;
-}
-.kb-button {
-  display: flex;
-  flex: 1;
-  padding: 0 25rpx;
 }
 </style>

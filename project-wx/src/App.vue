@@ -14,10 +14,16 @@ onLaunch(() => {
 });
 </script>
 <style>
+/* 全局暗色主题 */
+page {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
 view,
 text,
 image {
   display: block;
+  box-sizing: border-box;
 }
 .text-show {
   display: -webkit-box;
@@ -25,5 +31,20 @@ image {
   overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+/* 暗色滚动条 */
+::-webkit-scrollbar {
+  display: none;
+}
+/* 暗色输入框 */
+input,
+textarea {
+  background-color: #21262d !important;
+  color: #e6edf3 !important;
+}
+/* 暗色toast */
+uni-toast .uni-toast {
+  background-color: #21262d !important;
+  color: #e6edf3 !important;
 }
 </style>

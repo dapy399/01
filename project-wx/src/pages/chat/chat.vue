@@ -3,7 +3,7 @@
   <view class="menu-view">
     <view class="button-top"></view>
     <view class="menu-style">
-      <text v-for="(item, index) in menu" :key="index" @click="selectNav(item.type)">{{ item.value }}</text>
+      <text v-for="(item, index) in menu" :key="index" @click="selectNav(item.type)" :class="{ active: (item.type == 'AA' && pinia.switchChat) || (item.type == 'BB' && !pinia.switchChat) }">{{ item.value }}</text>
     </view>
   </view>
   <view class="ment-view-height"></view>
@@ -55,16 +55,17 @@ onLoad(async () => {
 
 <style>
 page {
-  background-color: #f3f3f3;
+  background-color: #0d1117;
 }
 .menu-view {
   height: v-bind("but_button");
-  background: linear-gradient(#ceeffd, #ebf5f9);
+  background: #161b22;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 9999;
+  border-bottom: 1rpx solid #30363d;
 }
 .button-top {
   height: v-bind("but_top");
@@ -76,8 +77,14 @@ page {
   padding-left: 20rpx;
 }
 .menu-style text {
-  color: #9d9486;
+  color: #8b949e;
   font-weight: bold;
+  font-size: 28rpx;
+  padding: 0 30rpx;
+  transition: color 0.2s;
+}
+.menu-style text.active {
+  color: #00d4aa;
 }
 .menu-style text:nth-child(2) {
   padding: 0 60rpx;

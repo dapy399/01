@@ -5,8 +5,8 @@
       <image v-if="pinia.userInfo?.avatar" :src="pinia.userInfo?.avatar" mode="aspectFill"></image>
       <text>{{ pinia.userInfo?.phoneNumber }}</text>
     </view>
-    <text class="new-dialogue" @click="createSession">开启新对话</text>
-    <text class="history">对话历史</text>
+    <view class="new-dialogue-btn" @click="createSession">+ 开启新对话</view>
+    <text class="history-title">对话历史</text>
     <!-- 消息列表 -->
     <scroll-view scroll-y type="list" class="scroll-height" enhanced enable-passive>
       <view
@@ -60,11 +60,11 @@ const createSession = () => {
   top: v-bind("but_button");
   bottom: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 99;
 }
 .personal-center {
-  background-color: #f8f8f8;
+  background-color: #161b22;
   position: fixed;
   left: -80%;
   top: v-bind("but_button");
@@ -72,6 +72,7 @@ const createSession = () => {
   width: 80%;
   animation: slideInFromLeft 0.5s forwards;
   z-index: 99;
+  border-right: 1rpx solid #30363d;
 }
 @keyframes slideInFromLeft {
   from {
@@ -92,47 +93,63 @@ const createSession = () => {
   width: 90rpx;
   height: 90rpx;
   border-radius: 50%;
+  border: 2rpx solid #30363d;
 }
 .user-info text {
   font-size: 35rpx;
   font-weight: bold;
   padding-top: 10rpx;
+  color: #e6edf3;
 }
-/* 开启新对话 */
-.new-dialogue {
-  margin: 45rpx 20rpx;
+/* 开启新对话按钮 */
+.new-dialogue-btn {
+  margin: 20rpx 24rpx;
+  padding: 20rpx;
+  background-color: rgba(0, 212, 170, 0.15);
+  border: 1rpx solid #00d4aa;
+  border-radius: 12rpx;
+  color: #00d4aa;
+  font-size: 28rpx;
+  font-weight: bold;
+  text-align: center;
 }
-/* 对话历史 */
-.history {
-  margin: 30rpx 20rpx;
-  border-bottom: 1rpx solid rgba(218, 218, 218, 0.6);
+/* 对话历史标题 */
+.history-title {
+  display: block;
+  margin: 30rpx 24rpx 20rpx 24rpx;
+  border-bottom: 1rpx solid #30363d;
   padding-bottom: 20rpx;
+  font-size: 24rpx;
+  color: #8b949e;
+  font-weight: bold;
+  letter-spacing: 2rpx;
 }
 /* 消息列表 */
 .scroll-height {
   height: 800rpx;
 }
 .history-list {
-  background-color: #ffffff;
-  border-radius: 20rpx;
-  margin: 20rpx;
-  padding: 20rpx;
+  background-color: #21262d;
+  border-radius: 12rpx;
+  margin: 12rpx 24rpx;
+  padding: 20rpx 24rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border: 1rpx solid transparent;
 }
 .history-list text:nth-child(1) {
   flex: 1;
   -webkit-line-clamp: 1;
+  color: #c9d1d9;
+  font-size: 28rpx;
 }
-/* .history-list text:nth-child(2) {
-  color: #9d9eab;
-  font-size: 26rpx;
-  padding-left: 20rpx;
-} */
 /* 点击之后每个会话样式 */
 .sessionStyle {
-  background-color: #5a66fc;
-  color: #ffffff;
+  background-color: rgba(0, 212, 170, 0.15) !important;
+  border-color: #00d4aa !important;
+}
+.sessionStyle text {
+  color: #00d4aa !important;
 }
 </style>
