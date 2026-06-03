@@ -82,7 +82,7 @@ jobs:
     - name: Deploy Wechat Mini Program
       run: |
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@121.43.149.193 "mkdir -p /var/www/ai-medical-wx"
-        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r project-wx/dist/mp-weixin/* root@121.43.149.193:/var/www/ai-medical-wx/
+        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r project-wx/dist/dev/mp-weixin/* root@121.43.149.193:/var/www/ai-medical-wx/
 
     - name: Reload Nginx
       run: |

@@ -15,7 +15,7 @@ import type {
 } from "@/types/index";
 import { TextDecoder } from "text-encoding-shim";
 
-// http璇锋眰
+// http请求
 const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T> => {
   return new Promise((resolve, reject) => {
     uni.request({
@@ -25,18 +25,18 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
       header: { Authorization: "Bearer " + project.userInfo?.token || "" },
       success: (res) => {
         const status = res.statusCode;
-        // 鍙栨秷鐧诲綍娉ㄥ唽鏃跺嚭鐜扮殑loading
+        // 取消登录注册时出现的loading
         project.loginLoading = false;
         switch (status) {
           case 200:
             resolve(res.data as T);
             break;
           case 404:
-            console.error("404寮傚父");
+            console.error("404异常");
             reject("404");
             break;
           case 401:
-            console.error("401娌℃湁璁块棶鏉冮檺");
+            console.error("401没有访问权限");
             reject("401");
             uni.navigateTo({ url: "/pages/userlogin/userlogin" });
             break;
@@ -47,9 +47,9 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
             console.log(res.data);
             uni.showToast({
               icon: "none",
-              title: "鍑虹幇寮傚父",
+              title: "出现异常",
             });
-            reject("鍑虹幇寮傚父");
+            reject("出现异常");
             break;
           case 400:
             console.error(res);
@@ -59,7 +59,7 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
             console.error(res.data);
             uni.showToast({
               icon: "none",
-              title: "鍙傛暟涓嶅",
+              title: "参数不对",
             });
             reject("422");
             break;
@@ -69,16 +69,16 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
         console.log(err);
         uni.showToast({
           icon: "none",
-          title: "鍑虹幇寮傚父",
+          title: "出现异常",
         });
-        // 鍙栨秷鐧诲綍娉ㄥ唽鏃跺嚭鐜扮殑loading
+        // 取消登录注册时出现的loading
         project.loginLoading = false;
       },
     });
   });
 };
 
-// 瀵硅瘽鎺ュ彛锛屾祦寮忚緭鍑?
+// 对话接口，流式输出
 const status = [500, 501, 502, 503, 504];
 export const SendMessageApi = (data: SendMessageType) => {
   const requestTask = uni.request({
@@ -89,15 +89,15 @@ export const SendMessageApi = (data: SendMessageType) => {
     header: { Authorization: "Bearer " + project.userInfo?.token || "" },
     complete: (data: any) => {
       console.log(data);
-      console.log("澶фā鍨嬪洖澶嶅畬姣?);
+      console.log("大模型回复完成");
       aiMessageObj.loadingCircle = false;
       project.disabledStatus = false;
       if (data.statusCode == 401) {
         uni.navigateTo({ url: "/pages/userlogin/userlogin" });
       } else if (data.statusCode == 400) {
-        uni.showToast({ icon: "none", title: "缂哄皯蹇呬紶鍙傛暟" });
+        uni.showToast({ icon: "none", title: "缺少必传参数" });
       } else if (status.includes(data.statusCode)) {
-        uni.showToast({ icon: "none", title: "鍑虹幇寮傚父" });
+        uni.showToast({ icon: "none", title: "出现异常" });
       }
     },
   });
@@ -109,63 +109,63 @@ export const SendMessageApi = (data: SendMessageType) => {
       if (part.trim() === "") continue;
       const aiMessage = JSON.parse(part) as AiMessageType;
       console.log(aiMessage);
-      // 鍙栦細璇漣d
+      // 获得会话id
       if (aiMessage.role === "sessionId") {
         project.sessionId = aiMessage.content;
         project.chatListData[0].sessionId = aiMessage.content;
       }
-      // 鍙栨枃妗ｆ垨鐭ヨ瘑搴撶殑鎻愮ず
+      // 获得文档或知识库的提示
       if (aiMessage.type) {
         aiMessageObj.readFileData = aiMessage;
       }
-      // 鍙栨ā鍨嬪洖澶嶇殑鏁版嵁
+      // 获得模型回复的数据
       if (aiMessage.role === "assistant") {
         aiMessageObj.loadingCircle = false;
         if (aiMessage.content && aiMessage.content.trim() !== "") {
           aiMessageObj.content += aiMessage.content;
         }
       }
-      // 妯″瀷鍥炲鍑洪敊
+      // 模型回复出错了
       if (aiMessage.role === "error") {
-        aiMessageObj.content = "鏈嶅姟鍣ㄧ箒蹇?璇风◢鍚庡啀璇?;
+        aiMessageObj.content = "服务器繁忙，请稍后再试";
       }
     }
   });
 };
 
-// 娉ㄥ唽鎺ュ彛
+// 注册接口
 export const UserRegisterApi = (params: UserRegisterType): Promise<ApiResponse<[]>> => {
   return request("/userinfo/registeruser", "POST", params);
 };
-// 鐧诲綍鎺ュ彛
+// 登录接口
 export const UserLoginApi = (params: UserLoginType): Promise<ApiResponse<UserInfoResType>> => {
   return request("/userinfo/loginuser", "POST", params);
 };
-// 鑾峰彇瀵硅瘽鍒楄〃鏁版嵁
+// 获取对话列表数据
 export const GetChatListApi = (): Promise<ApiResponse<GetChatListType[]>> => {
   return request("/chat/getchatlist", "GET");
 };
-// 鑾峰彇鏌愪釜浼氳瘽鐨勫璇濇暟鎹?
+// 获取某个会话的对话数据
 export const SingleChatDataApi = (params: { sessionId: string }): Promise<ApiResponse<MessageListType[]>> => {
   return request("/chat/singlechatdata", "GET", params);
 };
-// 瀵硅瘽妗嗘枃浠朵笂浼?
+// 对话文档文件上传
 export const UploadDialogApi = requestUrl + "/fileanagement/uploaddialog";
-// 鐭ヨ瘑搴撴枃浠朵笂浼?
+// 知识库文件上传
 export const UploadkbApi = requestUrl + "/fileanagement/uploadkb";
-// 瀵硅瘽妗嗗垹闄ゆ寚瀹氭枃浠?
+// 对话删除指定文件
 export const DeleteFileApi = (params: { docId: string }): Promise<ApiResponse<[]>> => {
   return request("/fileanagement/deletefile", "POST", params);
 };
-// 缁堟妯″瀷杈撳嚭
+// 停止模型输出
 export const StopOutputApi = (params: { sessionId: string }): Promise<ApiResponse<[]>> => {
   return request("/chat/stopoutput", "GET", params);
 };
-// 鑾峰彇鐭ヨ瘑搴撴枃浠跺垪琛?
+// 获取知识库文件列表
 export const KbFileListApi = (): Promise<ApiResponse<KbFileListType>> => {
   return request("/fileanagement/kbfilelist", "GET");
 };
-// 鑾峰彇棣栭〉鏁版嵁
+// 获取首页数据
 export const WxAppHomeApi = (): Promise<ApiResponse<WxAppHomeType>> => {
   return request("/wxapp/wxfrontpagedata", "GET");
 };
