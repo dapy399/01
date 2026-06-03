@@ -25,7 +25,7 @@ jobs:
     - name: Build frontend
       working-directory: ./project-user
       run: |
-        pnpm install
+        pnpm install --ignore-scripts
         pnpm build
 
     - name: Deploy backend
@@ -48,7 +48,7 @@ jobs:
           
           echo "[2/3] 安装依赖并编译..."
           cd $BACKEND_DIR
-          pnpm install
+          pnpm install --ignore-scripts
           pnpm build
           
           echo "[3/3] 重启服务..."
