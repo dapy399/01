@@ -1,0 +1,95 @@
+/* ============================================
+   极简科技暗色主题 (Dark Tech)
+   配色规范：
+   - 主背景: #0d1117
+   - 卡片背景: #161b22
+   - 强调色: #00d4aa (青蓝)
+   - 主文字: #e6edf3
+   - 次文字: #c9d1d9
+   - 辅助文字: #8b949e
+   - 边框: #30363d
+   ============================================ */
+
+:root {
+  /* 背景色 */
+  --dt-bg-primary: #0d1117;
+  --dt-bg-card: #161b22;
+  --dt-bg-hover: #21262d;
+  --dt-bg-active: #30363d;
+
+  /* 强调色 */
+  --dt-accent: #00d4aa;
+  --dt-accent-rgb: 0, 212, 170;
+  --dt-accent-hover: #00b894;
+
+  /* 文字色 */
+  --dt-text-primary: #e6edf3;
+  --dt-text-secondary: #c9d1d9;
+  --dt-text-muted: #8b949e;
+  --dt-text-disabled: #484f58;
+
+  /* 边框 */
+  --dt-border: #30363d;
+  --dt-border-light: #21262d;
+
+  /* 消息气泡 */
+  --dt-bubble-user-bg: rgba(0, 212, 170, 0.15);
+  --dt-bubble-user-border: rgba(0, 212, 170, 0.3);
+  --dt-bubble-ai-bg: #161b22;
+  --dt-bubble-ai-border: #30363d;
+
+  /* 阴影 */
+  --dt-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --dt-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  /* 过渡 */
+  --dt-transition: all 0.3s ease;
+}
+
+/* 全局滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--dt-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--dt-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dt-text-muted);
+}
+
+/* Element Plus 暗色覆盖 */
+.el-message-box {
+  background-color: var(--dt-bg-card) !important;
+  border: 1px solid var(--dt-border) !important;
+}
+.el-message-box__title,
+.el-message-box__message {
+  color: var(--dt-text-primary) !important;
+}
+.el-message-box__btns .el-button {
+  background-color: var(--dt-bg-hover);
+  border-color: var(--dt-border);
+  color: var(--dt-text-secondary);
+}
+.el-message-box__btns .el-button--primary {
+  background-color: var(--dt-accent);
+  border-color: var(--dt-accent);
+  color: var(--dt-bg-primary);
+}
+
+.el-loading-mask {
+  background-color: rgba(13, 17, 23, 0.9) !important;
+}
+
+/* 文本提示覆盖 */
+.el-popper.is-customized {
+  background: var(--dt-accent) !important;
+  color: var(--dt-bg-primary) !important;
+}
+.el-popper.is-customized .el-popper__arrow::before {
+  background: var(--dt-accent) !important;
+}

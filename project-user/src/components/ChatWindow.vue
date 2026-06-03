@@ -25,14 +25,17 @@
       </template>
       <!-- 模型消息 -->
       <div class="ai-message" v-if="item.role == 'assistant'">
-        <el-collapse v-if="item.readFileData" :key="item.readFileData.statusInfo">
-          <el-collapse-item :title="item.readFileData.promptInfo">
-            <div v-for="(itemb, indexb) in item.readFileData.fileList" :key="indexb">{{ indexb + 1 + "." }}{{ itemb }}</div>
-          </el-collapse-item>
-        </el-collapse>
-        <div v-html="marked(item.content)"></div>
-        <!-- loading -->
-        <div class="loading-circle" v-if="item.loadingCircle"></div>
+        <div class="ai-avatar">AI</div>
+        <div class="ai-content">
+          <el-collapse v-if="item.readFileData" :key="item.readFileData.statusInfo">
+            <el-collapse-item :title="item.readFileData.promptInfo">
+              <div v-for="(itemb, indexb) in item.readFileData.fileList" :key="indexb">{{ indexb + 1 + "." }}{{ itemb }}</div>
+            </el-collapse-item>
+          </el-collapse>
+          <div v-html="marked(item.content)"></div>
+          <!-- loading -->
+          <div class="loading-circle" v-if="item.loadingCircle"></div>
+        </div>
       </div>
     </div>
     <div style="height: 280px"></div>
@@ -51,10 +54,12 @@ import { marked } from "marked";
 </script>
 
 <style scoped>
-/* 样式层 */
+/* 样式层 - 暗色主题 */
 .chat-window {
   margin-left: 230px;
   width: 100%;
+  background-color: #0d1117;
+  min-height: 100vh;
 }
 .chat-message {
   display: flex;
@@ -62,36 +67,42 @@ import { marked } from "marked";
   max-width: 1000px;
   margin: 0 auto;
   overflow: hidden;
+  padding: 0 20px;
 }
 .user-message {
-  margin-top: 15px;
+  margin-top: 20px;
   max-width: 70%;
   align-self: flex-end;
 }
 .user-message p {
-  line-height: 1.5;
-  background-color: #3a71e8;
-  border-radius: 10px;
-  color: #ffffff;
-  padding: 10px;
+  line-height: 1.6;
+  background-color: rgba(0, 212, 170, 0.15);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 12px;
+  color: #e6edf3;
+  padding: 12px 16px;
+  font-size: 14px;
 }
 .file-view {
   display: flex;
   align-items: center;
   align-self: flex-end;
   flex-flow: wrap;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 .file-item {
   display: inline-flex;
-  border: 1px solid #f3f3f3;
-  padding: 5px;
+  border: 1px solid #30363d;
+  padding: 8px;
   border-radius: 10px;
-  /* 子元素在末端对其 */
   align-self: flex-end;
-  background-color: #ffffff;
+  background-color: #161b22;
   max-width: 270px;
   margin-left: 5px;
+  transition: all 0.2s ease;
+}
+.file-item:hover {
+  border-color: #00d4aa;
 }
 .file-item img {
   width: 30px;
@@ -108,36 +119,115 @@ import { marked } from "marked";
 }
 .file-name span:nth-child(1) {
   font-size: 14px;
+  color: #c9d1d9;
 }
 .file-name span:nth-child(2) {
   font-size: 12px;
-  color: #8d8ea5;
+  color: #8b949e;
 }
 .ai-message {
-  margin-top: 15px;
-  background-color: #ffffff;
-  padding: 10px;
-  border-radius: 10px;
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
 }
-.ai-message >>> .el-collapse-item__header {
-  color: blue;
-  font-size: 15px;
+.ai-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #00d4aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #0d1117;
+  font-weight: bold;
+  flex-shrink: 0;
 }
-.ai-message >>> .el-collapse-item__content {
-  background-color: #f7f8fc;
-  padding-bottom: 0 !important;
-  padding-left: 5px;
+.ai-content {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 16px;
+  flex: 1;
+  color: #c9d1d9;
+  font-size: 14px;
+  line-height: 1.7;
 }
-.ai-message >>> .el-collapse {
-  margin-bottom: 10px;
+.ai-content >>> .el-collapse-item__header {
+  color: #00d4aa;
+  font-size: 14px;
+  background: transparent;
+  border-bottom: 1px solid #30363d;
+}
+.ai-content >>> .el-collapse-item__content {
+  background-color: #0d1117;
+  padding: 12px;
+  border-radius: 8px;
+  color: #c9d1d9;
+}
+.ai-content >>> .el-collapse {
+  margin-bottom: 12px;
+  border: none;
+}
+.ai-content >>> .el-collapse-item__wrap {
+  background: transparent;
+  border: none;
+}
+/* Markdown 内容样式 */
+.ai-content :deep(h1),
+.ai-content :deep(h2),
+.ai-content :deep(h3) {
+  color: #e6edf3;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+.ai-content :deep(p) {
+  color: #c9d1d9;
+  margin-bottom: 8px;
+}
+.ai-content :deep(code) {
+  background: #21262d;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #00d4aa;
+  font-family: 'Courier New', monospace;
+}
+.ai-content :deep(pre) {
+  background: #21262d;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid #30363d;
+}
+.ai-content :deep(ul),
+.ai-content :deep(ol) {
+  padding-left: 20px;
+  color: #c9d1d9;
+}
+.ai-content :deep(li) {
+  margin-bottom: 4px;
+}
+.ai-content :deep(a) {
+  color: #00d4aa;
+  text-decoration: none;
+}
+.ai-content :deep(a:hover) {
+  text-decoration: underline;
+}
+.ai-content :deep(blockquote) {
+  border-left: 3px solid #00d4aa;
+  padding-left: 12px;
+  margin-left: 0;
+  color: #8b949e;
 }
 .loading-circle {
   width: 12px;
   height: 12px;
-  background-color: #3a71e8;
+  background-color: #00d4aa;
   border-radius: 50%;
-  margin: 5px 0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  margin: 10px 0 0 0;
+  box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
   animation: pulse 2s ease-in-out infinite;
 }
 @keyframes pulse {

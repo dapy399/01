@@ -5,10 +5,13 @@
 </template>
 
 <style>
+@import './styles/theme.css';
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #f6f7fb;
+  background-color: var(--dt-bg-primary);
+  color: var(--dt-text-primary);
 }
 p,
 div,
@@ -18,15 +21,15 @@ span {
   margin: 0;
   display: block;
 }
-/* 文字提示 0*/
+/* 文字提示 */
 .el-popper.is-customized {
   padding: 6px 12px;
-  background: #876aff;
-  color: #ffffff;
+  background: var(--dt-accent);
+  color: var(--dt-bg-primary);
 }
 
 .el-popper.is-customized .el-popper__arrow::before {
-  background: #876aff;
+  background: var(--dt-accent);
   right: 0;
 }
 /* 文本超过一行隐藏 */

@@ -74,10 +74,10 @@
           resize="none"
           @keydown="handleKeyDown"
         />
-        <el-button v-if="!project.disabledStatus">
+        <el-button v-if="!project.disabledStatus" class="send-btn">
           <img src="../assets//send-icon.png" alt="" class="send-icon" @click="sendMessage" />
         </el-button>
-        <el-button v-if="project.disabledStatus">
+        <el-button v-if="project.disabledStatus" class="stop-btn">
           <img src="../assets/stop-icon.png" alt="" class="send-icon" @click="stopOutput" />
         </el-button>
       </div>
@@ -106,40 +106,40 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 };
 const queryKbStyle = reactive({
-  border: "#eceff3",
-  backgroundColor: "#ffffff",
-  color: "#d783af",
+  border: "#30363d",
+  backgroundColor: "#161b22",
+  color: "#8b949e",
 });
 const webSearchStyle = reactive({
-  border: "#eceff3",
-  backgroundColor: "#ffffff",
-  color: "#1890ff",
+  border: "#30363d",
+  backgroundColor: "#161b22",
+  color: "#8b949e",
 });
 // 点击知识库按钮
 const queryKb = () => {
   project.isKnowledgeBased = !project.isKnowledgeBased;
   if (project.isKnowledgeBased) {
     // 选中
-    queryKbStyle.backgroundColor = "#597CEE";
-    queryKbStyle.border = "#597CEE";
-    queryKbStyle.color = "#ffffff";
+    queryKbStyle.backgroundColor = "rgba(0, 212, 170, 0.15)";
+    queryKbStyle.border = "#00d4aa";
+    queryKbStyle.color = "#00d4aa";
   } else {
-    queryKbStyle.backgroundColor = "#ffffff";
-    queryKbStyle.border = "#eceff3";
-    queryKbStyle.color = "#d783af";
+    queryKbStyle.backgroundColor = "#161b22";
+    queryKbStyle.border = "#30363d";
+    queryKbStyle.color = "#8b949e";
   }
 };
 // 切换联网搜索
 const toggleWebSearch = () => {
   project.isWebSearch = !project.isWebSearch;
   if (project.isWebSearch) {
-    webSearchStyle.backgroundColor = "#1890ff";
-    webSearchStyle.border = "#1890ff";
-    webSearchStyle.color = "#ffffff";
+    webSearchStyle.backgroundColor = "rgba(0, 212, 170, 0.15)";
+    webSearchStyle.border = "#00d4aa";
+    webSearchStyle.color = "#00d4aa";
   } else {
-    webSearchStyle.backgroundColor = "#ffffff";
-    webSearchStyle.border = "#eceff3";
-    webSearchStyle.color = "#1890ff";
+    webSearchStyle.backgroundColor = "#161b22";
+    webSearchStyle.border = "#30363d";
+    webSearchStyle.color = "#8b949e";
   }
 };
 //#endregion
@@ -161,7 +161,7 @@ const deleteFile = async (docId: string, index: number) => {
   const loading = ElLoading.service({
     lock: true,
     text: "删除中...",
-    background: "rgba(0, 0, 0, 0.8)",
+    background: "rgba(13, 17, 23, 0.9)",
   });
   try {
     await DeleteFileApi({ docId });
@@ -177,7 +177,7 @@ const deleteImage = async (imagePath: string) => {
   const loading = ElLoading.service({
     lock: true,
     text: "删除中...",
-    background: "rgba(0, 0, 0, 0.8)",
+    background: "rgba(13, 17, 23, 0.9)",
   });
   try {
     await DeleteIamgeApi({ imagePath });
@@ -236,32 +236,35 @@ const stopOutput = () => {
 </script>
 
 <style scoped>
-/* 样式层 */
+/* 样式层 - 暗色主题 */
 .chat-input {
-  background-color: #f6f7fb;
+  background: transparent;
   position: fixed;
   left: 230px;
   bottom: 0;
   right: 0;
-  padding-bottom: 30px;
+  padding: 0 40px 30px 40px;
+  z-index: 100;
 }
 .chat-input-flex {
   display: flex;
   flex-direction: column;
   max-width: 968px;
   margin: 0 auto;
-  background-color: #ffffff;
-  border: 1px solid #615ced;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0 1px 11px 7px rgba(0, 0, 0, 0.08);
+  background: rgba(22, 27, 34, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid #30363d;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 /* 功能选择按钮 */
 .function-select {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  gap: 8px;
 }
 .query-kb-button {
   width: fit-content;
@@ -270,18 +273,23 @@ const stopOutput = () => {
   border: 1px solid v-bind("queryKbStyle.border");
   border-radius: 20px;
   background-color: v-bind("queryKbStyle.backgroundColor");
-  /* margin-bottom: 10px; */
+  transition: all 0.2s ease;
+}
+.query-kb-button:hover {
+  border-color: #00d4aa;
 }
 /* 检查报告 */
 .check-report-button {
-  border: 1px solid #eceff3;
-  background-color: #ffffff;
+  border: 1px solid #30363d;
+  background-color: #161b22;
+}
+.check-report-button:hover {
+  border-color: #00d4aa;
 }
 /* 联网搜索按钮 */
 .web-search-button {
   border: 1px solid v-bind("webSearchStyle.border");
   background-color: v-bind("webSearchStyle.backgroundColor");
-  margin-left: 10px;
 }
 .web-search-button span {
   color: v-bind("webSearchStyle.color");
@@ -292,23 +300,21 @@ const stopOutput = () => {
   padding: 7px;
 }
 .query-kb span {
-  font-size: 14px;
+  font-size: 13px;
   padding-left: 6px;
   color: v-bind("queryKbStyle.color");
-}
-/* 检查报告 */
-.check-report-span {
-  color: #d783af !important;
 }
 .query-kb img {
   width: 15px;
   height: 15px;
+  filter: brightness(0.8);
 }
 .upload-file-list {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  padding-bottom: 15px;
+  padding-bottom: 12px;
+  gap: 8px;
 }
 .upload-file-item img {
   width: 30px;
@@ -318,28 +324,38 @@ const stopOutput = () => {
 .upload-file-item {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #cecfdd;
+  border: 1px solid #30363d;
   border-radius: 10px;
   max-width: 200px;
-  padding: 5px;
-  margin-right: 10px;
+  padding: 6px 8px;
   position: relative;
+  background: #0d1117;
+}
+.upload-file-item:hover {
+  border-color: #00d4aa;
 }
 .delete-file {
   position: absolute;
   bottom: 2px;
   right: 4px;
+  color: #8b949e;
+  cursor: pointer;
+}
+.delete-file:hover {
+  color: #f85149;
 }
 .upload-file-item span:nth-child(1) {
-  font-size: 14px;
+  font-size: 13px;
+  color: #c9d1d9;
 }
 .upload-file-item span:nth-child(2) {
-  font-size: 10px;
-  color: #cecfdd;
+  font-size: 11px;
+  color: #8b949e;
 }
 .chat-input-content {
   display: flex;
   align-items: flex-end;
+  gap: 12px;
 }
 .upload-icon {
   width: 34px;
@@ -347,10 +363,16 @@ const stopOutput = () => {
   display: flex;
   align-items: center;
   cursor: pointer;
+  flex-shrink: 0;
 }
 .upload-icon img {
   width: 20px;
   height: 20px;
+  filter: brightness(0.7);
+  transition: filter 0.2s;
+}
+.upload-icon:hover img {
+  filter: brightness(1);
 }
 /* 强制更改input样式 */
 .chat-input-content >>> .el-textarea__inner:focus {
@@ -359,34 +381,57 @@ const stopOutput = () => {
 }
 .chat-input-content >>> .el-textarea__inner {
   box-shadow: none;
-  background: none;
-  font-size: 16px;
+  background: transparent;
+  font-size: 14px;
+  color: #e6edf3;
+  resize: none;
+}
+.chat-input-content >>> .el-textarea__inner::placeholder {
+  color: #8b949e;
 }
 .send-icon {
-  width: 34px;
+  width: 28px;
   height: auto;
 }
-.chat-input-content >>> .el-button {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  margin-left: 10px;
-  background: none;
+.send-btn,
+.stop-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  margin-left: 8px;
+  background: #00d4aa;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+.send-btn:hover {
+  background: #00b894;
+  transform: scale(1.05);
+}
+.stop-btn {
+  background: #f85149;
+}
+.stop-btn:hover {
+  background: #da3633;
+  transform: scale(1.05);
+}
+.chat-input-content >>> .el-button {
+  padding: 0;
 }
 /* 上传图片的样式 */
-.check-report-button {
-  border: 1px solid #eceff3;
-  background-color: #ffffff;
-}
 .upload-image-item {
   width: 50px;
   height: 50px;
   position: relative;
-  border: 1px solid #dcdcdc;
+  border: 1px solid #30363d;
   border-radius: 10px;
   overflow: hidden;
   padding: 3px;
+  background: #0d1117;
 }
 .upload-image-item img {
   width: 50px;
@@ -397,5 +442,12 @@ const stopOutput = () => {
   position: absolute;
   right: 3px;
   top: 3px;
+  color: #8b949e;
+  cursor: pointer;
+  background: rgba(13, 17, 23, 0.8);
+  border-radius: 50%;
+}
+.delete-image:hover {
+  color: #f85149;
 }
 </style>

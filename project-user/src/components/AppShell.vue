@@ -24,9 +24,10 @@ const project = projectStore();
 </script>
 
 <style>
-/* 样式层 */
+/* 样式层 - 暗色主题 */
 .chat-layout {
   display: flex;
   height: 100vh;
+  background-color: #0d1117;
 }
 </style>
