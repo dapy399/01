@@ -21,7 +21,7 @@ jobs:
       with:
         host: ${{ secrets.ECS_HOST }}
         username: ${{ secrets.ECS_USER }}
-        password: ${{ secrets.ECS_PASSWORD }}
+        key: ${{ secrets.ECS_PRIVATE_KEY }}
         script: |
           cd /opt/ai-medical-rag && git pull origin main
           cd nest-serve && pnpm install --ignore-scripts && pnpm build
@@ -33,7 +33,7 @@ jobs:
       with:
         host: ${{ secrets.ECS_HOST }}
         username: ${{ secrets.ECS_USER }}
-        password: ${{ secrets.ECS_PASSWORD }}
+        key: ${{ secrets.ECS_PRIVATE_KEY }}
         source: "project-user/dist/*"
         target: "/var/www/ai-medical"
         strip_components: 2
@@ -43,5 +43,5 @@ jobs:
       with:
         host: ${{ secrets.ECS_HOST }}
         username: ${{ secrets.ECS_USER }}
-        password: ${{ secrets.ECS_PASSWORD }}
+        key: ${{ secrets.ECS_PRIVATE_KEY }}
         script: sudo nginx -t && sudo systemctl reload nginx && echo "Deploy complete!"
