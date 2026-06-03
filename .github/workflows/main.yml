@@ -28,6 +28,12 @@ jobs:
         pnpm install --ignore-scripts
         pnpm build
 
+    - name: Build backend
+      working-directory: ./nest-serve
+      run: |
+        pnpm install --ignore-scripts
+        pnpm build
+
     - name: Build Wechat Mini Program
       working-directory: ./project-wx
       run: |
@@ -43,36 +49,26 @@ jobs:
 
     - name: Deploy backend
       run: |
+        echo "[1/3] 上传后端代码..."
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@121.43.149.193 "mkdir -p /opt/ai-medical-rag/nest-serve"
+        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r nest-serve/* root@121.43.149.193:/opt/ai-medical-rag/nest-serve/
+        
+        echo "[2/3] 服务器上安装依赖并编译..."
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@121.43.149.193 << 'EOF'
-          set -e
-          echo "========================================"
-          echo "  开始部署后端"
-          echo "========================================"
-
-          BACKEND_DIR="/opt/ai-medical-rag/nest-serve"
-
-          echo "[1/3] 拉取最新代码..."
-          cd /opt/ai-medical-rag
-          git pull origin main
-
-          echo "[2/3] 安装依赖并编译..."
-          cd $BACKEND_DIR
+          cd /opt/ai-medical-rag/nest-serve
           pnpm install --ignore-scripts
           pnpm build
-
-          echo "[3/3] 重启服务..."
+        EOF
+        
+        echo "[3/3] 重启服务..."
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@121.43.149.193 << 'EOF'
+          cd /opt/ai-medical-rag/nest-serve
           if pm2 list | grep -q "ai-medical-backend"; then
             pm2 restart ai-medical-backend
-            echo "服务已重启"
           else
             pm2 start dist/src/main.js --name ai-medical-backend
             pm2 save
-            echo "服务已启动"
           fi
-
-          echo "========================================"
-          echo "  后端部署完成！"
-          echo "========================================"
         EOF
 
     - name: Deploy frontend
@@ -92,4 +88,3 @@ jobs:
         echo "  前端: http://121.43.149.193"
         echo "  小程序: /var/www/ai-medical-wx (微信开发者工具导入)"
         echo "========================================"
-# pipeline re-trigger
