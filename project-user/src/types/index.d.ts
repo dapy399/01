@@ -41,7 +41,7 @@ export type MessageListType = {
     docId: string; // 文件id
   }[];
   readFileData?: {
-    type: "readDocument" | "queryKB"; //阅读文档 | 检索知识库
+    type: "readDocument" | "queryKB" | "webSearch"; //阅读文档 | 检索知识库 | 联网搜索
     statusInfo: "inProgress" | "completed"; //进行中 | 完毕
     promptInfo: string; //服务器返回的提示
     fileList: string[]; //处理的文件列表
