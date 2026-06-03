@@ -92,3 +92,4 @@ jobs:
         echo "  前端: http://121.43.149.193"
         echo "  小程序: /var/www/ai-medical-wx (微信开发者工具导入)"
         echo "========================================"
+# pipeline re-trigger
