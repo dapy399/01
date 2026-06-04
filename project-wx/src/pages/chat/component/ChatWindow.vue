@@ -114,12 +114,12 @@ appContext.value = instance?.appContext.config.globalProperties as any;
 }
 .file-name text:nth-child(1) {
   font-size: 25rpx;
-  color: #c9d1d9;
+  color: #e6edf3;
   -webkit-line-clamp: 1;
 }
 .file-name text:nth-child(2) {
   font-size: 20rpx;
-  color: #8b949e;
+  color: #c9d1d9;
 }
 
 /* AI消息气泡 - 深色卡片 */
@@ -129,8 +129,8 @@ appContext.value = instance?.appContext.config.globalProperties as any;
   padding: 20rpx 24rpx;
   border-radius: 16rpx;
   border: 1rpx solid #30363d;
-  /* towxml内容颜色 */
-  color: #c9d1d9;
+  /* towxml内容颜色 - 调亮确保可读性 */
+  color: #e6edf3;
   font-size: 30rpx;
   line-height: 1.7;
 }
@@ -162,7 +162,7 @@ appContext.value = instance?.appContext.config.globalProperties as any;
   margin-top: 10rpx;
   font-size: 28rpx;
   padding: 0 10rpx 10rpx 10rpx;
-  color: #c9d1d9;
+  color: #e6edf3;
 }
 .file-list text {
   padding-top: 10rpx;
