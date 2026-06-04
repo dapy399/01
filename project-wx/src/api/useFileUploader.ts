@@ -1,6 +1,6 @@
 // -------------------------文件上传：对话框，知识库
 import { projectStore } from "@/store/index";
-const getStore = () => projectStore();
+const pinia = projectStore();
 
 interface UseFileUploaderOptions {
   page: "knowledge" | "chatinput";
@@ -19,7 +19,6 @@ function chooseFiles(): Promise<UniApp.ChooseMessageFileSuccessCallbackResult> {
   });
 }
 export const useFileUploader = async (options: UseFileUploaderOptions) => {
-  const pinia = getStore();
   // 如果没有登陆，禁止上传
   if (!pinia.userInfo) {
     uni.navigateTo({ url: "/pages/userlogin/userlogin" });

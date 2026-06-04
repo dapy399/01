@@ -1,7 +1,6 @@
-const requestUrl = "http://121.43.149.193/api";
+const requestUrl = "http://127.0.0.1:7005/api";
 import { projectStore } from "@/store/index";
-// ¶èĞÔ»ñÈ¡ store ÊµÀı£¬±ÜÃâÄ£¿é¼ÓÔØÊ±¹ıÔç³õÊ¼»¯
-const getProject = () => projectStore();
+const project = projectStore();
 import type {
   UserRegisterType,
   UserLoginType,
@@ -16,29 +15,28 @@ import type {
 } from "@/types/index";
 import { TextDecoder } from "text-encoding-shim";
 
-// httpÇëÇó
+// httpè¯·æ±‚
 const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T> => {
   return new Promise((resolve, reject) => {
     uni.request({
       url: requestUrl + url,
       method,
       data,
-      timeout: 10000,
-      header: { Authorization: "Bearer " + (getProject().userInfo?.token || "") },
+      header: { Authorization: "Bearer " + project.userInfo?.token || "" },
       success: (res) => {
         const status = res.statusCode;
-        // È¡ÏûµÇÂ¼×¢²áÊ±³öÏÖµÄloading
-        getProject().loginLoading = false;
+        // å–æ¶ˆç™»å½•æ³¨å†Œæ—¶å‡ºç°çš„loading
+        project.loginLoading = false;
         switch (status) {
           case 200:
             resolve(res.data as T);
             break;
           case 404:
-            console.error("404Òì³£");
+            console.error("404å¼‚å¸¸");
             reject("404");
             break;
           case 401:
-            console.error("401Ã»ÓĞ·ÃÎÊÈ¨ÏŞ");
+            console.error("401æ²¡æœ‰è®¿é—®æƒé™");
             reject("401");
             uni.navigateTo({ url: "/pages/userlogin/userlogin" });
             break;
@@ -49,9 +47,9 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
             console.log(res.data);
             uni.showToast({
               icon: "none",
-              title: "³öÏÖÒì³£",
+              title: "å‡ºç°å¼‚å¸¸",
             });
-            reject("³öÏÖÒì³£");
+            reject("å‡ºç°å¼‚å¸¸");
             break;
           case 400:
             console.error(res);
@@ -61,12 +59,9 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
             console.error(res.data);
             uni.showToast({
               icon: "none",
-              title: "²ÎÊı²»¶Ô",
+              title: "å‚æ•°ä¸å¯¹",
             });
             reject("422");
-            break;
-          default:
-            reject(`ÇëÇóÊ§°Ü£¬×´Ì¬Âë: ${status}`);
             break;
         }
       },
@@ -74,17 +69,16 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
         console.log(err);
         uni.showToast({
           icon: "none",
-          title: "ÍøÂçÇëÇóÊ§°Ü£¬Çë¼ì²éÍøÂç",
+          title: "å‡ºç°å¼‚å¸¸",
         });
-        // È¡ÏûµÇÂ¼×¢²áÊ±³öÏÖµÄloading
-        getProject().loginLoading = false;
-        reject(err);
+        // å–æ¶ˆç™»å½•æ³¨å†Œæ—¶å‡ºç°çš„loading
+        project.loginLoading = false;
       },
     });
   });
 };
 
-// ¶Ô»°½Ó¿Ú£¬Á÷Ê½Êä³ö
+// å¯¹è¯æ¥å£ï¼Œæµå¼è¾“å‡º
 const status = [500, 501, 502, 503, 504];
 export const SendMessageApi = (data: SendMessageType) => {
   const requestTask = uni.request({
@@ -92,22 +86,22 @@ export const SendMessageApi = (data: SendMessageType) => {
     method: "POST",
     data: data,
     enableChunked: true,
-    header: { Authorization: "Bearer " + (getProject().userInfo?.token || "") },
+    header: { Authorization: "Bearer " + project.userInfo?.token || "" },
     complete: (data: any) => {
       console.log(data);
-      console.log("´óÄ£ĞÍ»Ø¸´Íê³É");
+      console.log("å¤§æ¨¡å‹å›å¤å®Œæ¯•");
       aiMessageObj.loadingCircle = false;
-      getProject().disabledStatus = false;
+      project.disabledStatus = false;
       if (data.statusCode == 401) {
         uni.navigateTo({ url: "/pages/userlogin/userlogin" });
       } else if (data.statusCode == 400) {
-        uni.showToast({ icon: "none", title: "È±ÉÙ±Ø´«²ÎÊı" });
+        uni.showToast({ icon: "none", title: "ç¼ºå°‘å¿…ä¼ å‚æ•°" });
       } else if (status.includes(data.statusCode)) {
-        uni.showToast({ icon: "none", title: "³öÏÖÒì³£" });
+        uni.showToast({ icon: "none", title: "å‡ºç°å¼‚å¸¸" });
       }
     },
   });
-  const aiMessageObj = getProject().messageList[getProject().messageList.length - 1];
+  const aiMessageObj = project.messageList[project.messageList.length - 1];
   (requestTask as any).onChunkReceived((response: { data: Uint8Array }) => {
     const chunk = new TextDecoder("utf-8").decode(new Uint8Array(response.data));
     let parts = chunk.split("###ABC###");
@@ -115,63 +109,63 @@ export const SendMessageApi = (data: SendMessageType) => {
       if (part.trim() === "") continue;
       const aiMessage = JSON.parse(part) as AiMessageType;
       console.log(aiMessage);
-      // »ñµÃ»á»°id
+      // å–ä¼šè¯id
       if (aiMessage.role === "sessionId") {
-        getProject().sessionId = aiMessage.content;
-        getProject().chatListData[0].sessionId = aiMessage.content;
+        project.sessionId = aiMessage.content;
+        project.chatListData[0].sessionId = aiMessage.content;
       }
-      // »ñµÃÎÄµµ»òÖªÊ¶¿âµÄÌáÊ¾
+      // å–æ–‡æ¡£æˆ–çŸ¥è¯†åº“çš„æç¤º
       if (aiMessage.type) {
         aiMessageObj.readFileData = aiMessage;
       }
-      // »ñµÃÄ£ĞÍ»Ø¸´µÄÊı¾İ
+      // å–æ¨¡å‹å›å¤çš„æ•°æ®
       if (aiMessage.role === "assistant") {
         aiMessageObj.loadingCircle = false;
         if (aiMessage.content && aiMessage.content.trim() !== "") {
           aiMessageObj.content += aiMessage.content;
         }
       }
-      // Ä£ĞÍ»Ø¸´³ö´íÁË
+      // æ¨¡å‹å›å¤å‡ºé”™
       if (aiMessage.role === "error") {
-        aiMessageObj.content = "·şÎñÆ÷·±Ã¦£¬ÇëÉÔºóÔÙÊÔ";
+        aiMessageObj.content = "æœåŠ¡å™¨ç¹å¿™,è¯·ç¨åå†è¯•";
       }
     }
   });
 };
 
-// ×¢²á½Ó¿Ú
+// æ³¨å†Œæ¥å£
 export const UserRegisterApi = (params: UserRegisterType): Promise<ApiResponse<[]>> => {
   return request("/userinfo/registeruser", "POST", params);
 };
-// µÇÂ¼½Ó¿Ú
+// ç™»å½•æ¥å£
 export const UserLoginApi = (params: UserLoginType): Promise<ApiResponse<UserInfoResType>> => {
   return request("/userinfo/loginuser", "POST", params);
 };
-// »ñÈ¡¶Ô»°ÁĞ±íÊı¾İ
+// è·å–å¯¹è¯åˆ—è¡¨æ•°æ®
 export const GetChatListApi = (): Promise<ApiResponse<GetChatListType[]>> => {
   return request("/chat/getchatlist", "GET");
 };
-// »ñÈ¡Ä³¸ö»á»°µÄ¶Ô»°Êı¾İ
+// è·å–æŸä¸ªä¼šè¯çš„å¯¹è¯æ•°æ®
 export const SingleChatDataApi = (params: { sessionId: string }): Promise<ApiResponse<MessageListType[]>> => {
   return request("/chat/singlechatdata", "GET", params);
 };
-// ¶Ô»°ÎÄµµÎÄ¼şÉÏ´«
+// å¯¹è¯æ¡†æ–‡ä»¶ä¸Šä¼ 
 export const UploadDialogApi = requestUrl + "/fileanagement/uploaddialog";
-// ÖªÊ¶¿âÎÄ¼şÉÏ´«
+// çŸ¥è¯†åº“æ–‡ä»¶ä¸Šä¼ 
 export const UploadkbApi = requestUrl + "/fileanagement/uploadkb";
-// ¶Ô»°É¾³ıÖ¸¶¨ÎÄ¼ş
+// å¯¹è¯æ¡†åˆ é™¤æŒ‡å®šæ–‡ä»¶
 export const DeleteFileApi = (params: { docId: string }): Promise<ApiResponse<[]>> => {
   return request("/fileanagement/deletefile", "POST", params);
 };
-// Í£Ö¹Ä£ĞÍÊä³ö
+// ç»ˆæ­¢æ¨¡å‹è¾“å‡º
 export const StopOutputApi = (params: { sessionId: string }): Promise<ApiResponse<[]>> => {
   return request("/chat/stopoutput", "GET", params);
 };
-// »ñÈ¡ÖªÊ¶¿âÎÄ¼şÁĞ±í
+// è·å–çŸ¥è¯†åº“æ–‡ä»¶åˆ—è¡¨
 export const KbFileListApi = (): Promise<ApiResponse<KbFileListType>> => {
   return request("/fileanagement/kbfilelist", "GET");
 };
-// »ñÈ¡Ê×Ò³Êı¾İ
+// è·å–é¦–é¡µæ•°æ®
 export const WxAppHomeApi = (): Promise<ApiResponse<WxAppHomeType>> => {
   return request("/wxapp/wxfrontpagedata", "GET");
 };

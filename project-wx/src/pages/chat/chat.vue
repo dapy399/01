@@ -1,22 +1,20 @@
 <template>
-  <view class="chat-page">
-    <!-- 顶部导航切换 -->
-    <view class="menu-view">
-      <view class="button-top"></view>
-      <view class="menu-style">
-        <text v-for="(item, index) in menu" :key="index" @click="selectNav(item.type)" :class="{ active: (item.type == 'AA' && pinia.switchChat) || (item.type == 'BB' && !pinia.switchChat) }">{{ item.value }}</text>
-      </view>
+  <!-- 顶部导航切换 -->
+  <view class="menu-view">
+    <view class="button-top"></view>
+    <view class="menu-style">
+      <text v-for="(item, index) in menu" :key="index" @click="selectNav(item.type)">{{ item.value }}</text>
     </view>
-    <view class="ment-view-height"></view>
-    <!-- 对话历史 -->
-    <ChatHistory v-show="pinia.switchChat"></ChatHistory>
-    <!-- 对话界面 -->
-    <ChatWindow v-if="!pinia.chatWelcome"></ChatWindow>
-    <!-- 底部输入框 -->
-    <ChatInput></ChatInput>
-    <!-- 欢迎页面 -->
-    <ChatWelcome v-if="pinia.chatWelcome"></ChatWelcome>
   </view>
+  <view class="ment-view-height"></view>
+  <!-- 对话历史 -->
+  <ChatHistory v-show="pinia.switchChat"></ChatHistory>
+  <!-- 对话界面 -->
+  <ChatWindow v-if="!pinia.chatWelcome"></ChatWindow>
+  <!-- 底部输入框 -->
+  <ChatInput></ChatInput>
+  <!-- 欢迎页面 -->
+  <ChatWelcome v-if="pinia.chatWelcome"></ChatWelcome>
 </template>
 
 <script setup lang="ts">
@@ -48,14 +46,10 @@ const selectNav = (type: string) => {
 };
 // 初次进入该页面，获取对话列表
 onLoad(async () => {
-  try {
-    const chatListData = await GetChatListApi();
-    console.log(chatListData);
-    pinia.chatListData = chatListData.data;
-  } catch (error) {
-    console.error("获取对话列表失败:", error);
-    pinia.chatListData = [];
-  }
+  const chatListData = await GetChatListApi();
+  console.log(chatListData);
+
+  pinia.chatListData = chatListData.data;
 });
 </script>
 
@@ -65,13 +59,13 @@ page {
 }
 .menu-view {
   height: v-bind("but_button");
-  background: #161b22;
+  background: linear-gradient(#161b22, #0d1117);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 9999;
-  border-bottom: 1rpx solid #30363d;
+  border-bottom: 1px solid #30363d;
 }
 .button-top {
   height: v-bind("but_top");
@@ -83,13 +77,10 @@ page {
   padding-left: 20rpx;
 }
 .menu-style text {
-  color: #8b949e;
+  color: #c9d1d9;
   font-weight: bold;
-  font-size: 28rpx;
-  padding: 0 30rpx;
-  transition: color 0.2s;
 }
-.menu-style text.active {
+.menu-style text:active {
   color: #00d4aa;
 }
 .menu-style text:nth-child(2) {

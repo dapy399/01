@@ -1,22 +1,16 @@
 {
   "pages": [
     {
-      "path": "pages/index/index",
+      "path": "pages/chat/chat",
       "style": {
-        "navigationBarTitleText": "Ai医疗助手"
+        "navigationBarTitleText": "问Ai",
+        "navigationStyle": "custom"
       }
     },
     {
       "path": "pages/knowledge/knowledge",
       "style": {
         "navigationBarTitleText": "医学库"
-      }
-    },
-    {
-      "path": "pages/chat/chat",
-      "style": {
-        "navigationBarTitleText": "问Ai",
-        "navigationStyle": "custom"
       }
     },
     {

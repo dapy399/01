@@ -1,7 +1,7 @@
 /*正文样式*/
 .h2w-dark {
-  color:#ddd;
-  background-color:#000;
+  color:#e6edf3;
+  background-color: transparent;
 }
 
 /**标题**/
@@ -39,12 +39,12 @@
 
 /**块元素**/
 .h2w-dark .h2w__blockquote {
-    border-left-color:#10230f;
+    border-left-color:#00d4aa;
 }
 
 /**内连元素**/
 .h2w-dark .h2w__a {
-    color:#1aad16; border-color:#4d804b;
+  color:#00d4aa; border-color:#00d4aa;
 }
 
 .h2w-dark .h2w__hr {

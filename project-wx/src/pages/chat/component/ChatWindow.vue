@@ -26,12 +26,7 @@
           <text v-for="(itemb, indexb) in item.readFileData.fileList" :key="indexb">{{ indexb + 1 + "." }}{{ itemb }}</text>
         </view>
       </view>
-      <towxml class="ai-markdown" :nodes="appContext.$towxml(item.content, 'markdown')"></towxml>
-      <!-- 联网搜索状态 -->
-      <view class="web-search-status" v-if="item.webSearch">
-        <text class="status-dot"></text>
-        <text>联网搜索完成</text>
-      </view>
+      <towxml :nodes="appContext.$towxml(item.content, 'markdown', {theme: 'dark'})"></towxml>
       <!-- loading -->
       <view class="loading-circle" v-if="item.loadingCircle"></view>
     </view>
@@ -59,10 +54,8 @@ appContext.value = instance?.appContext.config.globalProperties as any;
 .chat-message {
   display: flex;
   flex-direction: column;
-  margin: 0 24rpx;
+  margin: 0 15rpx;
 }
-
-/* 用户消息气泡 - 青蓝玻璃风格 */
 .user-message {
   margin-top: 30rpx;
   max-width: 70%;
@@ -71,15 +64,12 @@ appContext.value = instance?.appContext.config.globalProperties as any;
 .user-message text {
   line-height: 1.6;
   background-color: rgba(0, 212, 170, 0.15);
-  border: 1rpx solid rgba(0, 212, 170, 0.3);
-  border-radius: 18rpx;
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 12rpx;
   color: #e6edf3;
-  padding: 16rpx 22rpx;
+  padding: 12rpx 16rpx;
   font-size: 30rpx;
-  display: inline-block;
 }
-
-/* 文件列表 */
 .file-view {
   display: flex;
   align-items: center;
@@ -91,13 +81,18 @@ appContext.value = instance?.appContext.config.globalProperties as any;
 .file-item {
   display: inline-flex;
   border: 1rpx solid #30363d;
-  padding: 5rpx;
+  padding: 8rpx;
   border-radius: 10rpx;
+  /* 子元素在末端对其 */
   align-self: flex-end;
-  background-color: #21262d;
+  background-color: #161b22;
   max-width: 270rpx;
   margin-left: 5rpx;
   margin-bottom: 5rpx;
+  transition: all 0.2s ease;
+}
+.file-item:active {
+  border-color: #00d4aa;
 }
 .file-item image {
   width: 50rpx;
@@ -114,32 +109,76 @@ appContext.value = instance?.appContext.config.globalProperties as any;
 }
 .file-name text:nth-child(1) {
   font-size: 25rpx;
-  color: #e6edf3;
   -webkit-line-clamp: 1;
+  color: #c9d1d9;
 }
 .file-name text:nth-child(2) {
   font-size: 20rpx;
-  color: #c9d1d9;
+  color: #8b949e;
 }
-
-/* AI消息气泡 - 深色卡片 */
 .ai-message {
   margin-top: 30rpx;
-  background-color: #161b22;
-  padding: 20rpx 24rpx;
-  border-radius: 16rpx;
-  border: 1rpx solid #30363d;
-  /* towxml内容颜色 - 调亮确保可读性 */
+  background-color: rgba(0, 212, 170, 0.15);
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 12rpx;
+  padding: 16rpx;
   color: #e6edf3;
-  font-size: 30rpx;
+  font-size: 28rpx;
   line-height: 1.7;
 }
-
+/* Markdown 内容样式 */
+.ai-message >>> h1,
+.ai-message >>> h2,
+.ai-message >>> h3 {
+  color: #e6edf3;
+  margin-top: 32rpx;
+  margin-bottom: 16rpx;
+}
+.ai-message >>> p {
+  color: #e6edf3;
+  margin-bottom: 16rpx;
+}
+.ai-message >>> code {
+  background: #21262d;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  color: #00d4aa;
+  font-family: 'Courier New', monospace;
+}
+.ai-message >>> pre {
+  background: #21262d;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  overflow-x: auto;
+  border: 1px solid #30363d;
+  margin: 16rpx 0;
+}
+.ai-message >>> ul,
+.ai-message >>> ol {
+  padding-left: 40rpx;
+  color: #e6edf3;
+}
+.ai-message >>> li {
+  margin-bottom: 8rpx;
+}
+.ai-message >>> a {
+  color: #00d4aa;
+  text-decoration: none;
+}
+.ai-message >>> a:active {
+  text-decoration: underline;
+}
+.ai-message >>> blockquote {
+  border-left: 3px solid #00d4aa;
+  padding-left: 24rpx;
+  margin-left: 0;
+  color: #c9d1d9;
+}
 /* 展开收起 */
 .file-reading {
   margin-bottom: 10rpx;
-  border-top: 1rpx solid #30363d;
-  border-bottom: 1rpx solid #30363d;
+  border-top: 1rpx solid rgba(0, 212, 170, 0.2);
+  border-bottom: 1rpx solid rgba(0, 212, 170, 0.2);
   padding: 20rpx 0;
 }
 .file-class {
@@ -157,7 +196,7 @@ appContext.value = instance?.appContext.config.globalProperties as any;
   height: 25rpx;
 }
 .file-list {
-  background: #21262d;
+  background: rgba(13, 17, 23, 0.6);
   border-radius: 8rpx;
   margin-top: 10rpx;
   font-size: 28rpx;
@@ -166,36 +205,21 @@ appContext.value = instance?.appContext.config.globalProperties as any;
 }
 .file-list text {
   padding-top: 10rpx;
+  color: #e6edf3;
 }
 
-/* 联网搜索状态 */
-.web-search-status {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  margin-top: 12rpx;
-  font-size: 24rpx;
-  color: #00d4aa;
-}
-.status-dot {
-  width: 8rpx;
-  height: 8rpx;
-  border-radius: 50%;
-  background-color: #00d4aa;
-}
-
-/* Loading */
 .loading-circle {
   width: 12px;
   height: 12px;
   background-color: #00d4aa;
   border-radius: 50%;
-  margin: 8px 0;
-  box-shadow: 0 0 8px rgba(0, 212, 170, 0.5);
+  margin: 10rpx 0 0 0;
+  box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
   animation: pulse 2s ease-in-out infinite;
 }
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }

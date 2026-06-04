@@ -1,20 +1,18 @@
 <template>
-  <view class="userlogin-page">
-    <text class="login-tips">登录体验更多AI功能</text>
-    <view class="login-view">
-      <image class="logo" mode="aspectFill" src="/static/logo.png"></image>
-      <view class="user-input">
-        <input type="number" v-model="phoneNumber" placeholder="请输入手机号码，会和pc端同步数据" />
-      </view>
-      <view class="user-input">
-        <input type="text" password v-model="passWord" placeholder="请输入密码" />
-      </view>
-      <view class="user-input" v-if="loginMode === '登录'">
-        <input type="text" password v-model="confirmPassword" placeholder="再次输入密码" />
-      </view>
-      <text class="switch" @click="toggleLoginMode">{{ loginMode }}</text>
-      <button class="submit-button" :loading="pinia.loginLoading" @click="handleLoginRegister">{{ loginMode == "登录" ? "注册" : "登录" }}</button>
+  <text class="login-tips">登录体验更多AI功能</text>
+  <view class="login-view">
+    <image class="logo" mode="aspectFill" src="/static/logo.png"></image>
+    <view class="user-input">
+      <input type="number" v-model="phoneNumber" placeholder="请输入手机号码，会和pc端同步数据" />
     </view>
+    <view class="user-input">
+      <input type="text" password v-model="passWord" placeholder="请输入密码" />
+    </view>
+    <view class="user-input" v-if="loginMode === '登录'">
+      <input type="text" password v-model="confirmPassword" placeholder="再次输入密码" />
+    </view>
+    <text class="switch" @click="toggleLoginMode">{{ loginMode }}</text>
+    <button class="submit-button" :loading="pinia.loginLoading" @click="handleLoginRegister">{{ loginMode == "登录" ? "注册" : "登录" }}</button>
   </view>
 </template>
 
@@ -35,40 +33,34 @@ const passWord = ref("");
 const confirmPassword = ref("");
 // 登录注册
 const handleLoginRegister = async () => {
-  try {
-    validators.isPhoneNumber(phoneNumber.value);
-    validators.isPasswordValid(passWord.value);
-    // 登录
-    if (loginMode.value == "注册") {
-      console.log("登录");
-      pinia.loginLoading = true;
-      const res = await UserLoginApi({ phoneNumber: phoneNumber.value, password: passWord.value });
-      console.log(res);
-      pinia.userLogin(res.data);
-      // 登录成功返回上一页
-      uni.navigateBack({ delta: 1 });
-      // 登录成功，立马获取对话列表数据和获取用户信息
-      const chatListData = await GetChatListApi();
-      pinia.chatListData = chatListData.data;
-      pinia.initUserFromStorage();
-    }
-    // 注册
-    if (loginMode.value == "登录") {
-      console.log("注册");
-      validators.isEqual(passWord.value, confirmPassword.value);
-      pinia.loginLoading = true;
-      await UserRegisterApi({
-        phoneNumber: phoneNumber.value,
-        password: passWord.value,
-        confirmPassword: confirmPassword.value,
-      });
-      // 切换回登录
-      loginMode.value = "注册";
-    }
-  } catch (error) {
-    console.error("登录/注册失败:", error);
-  } finally {
-    pinia.loginLoading = false;
+  validators.isPhoneNumber(phoneNumber.value);
+  validators.isPasswordValid(passWord.value);
+  // 登录
+  if (loginMode.value == "注册") {
+    console.log("登录");
+    pinia.loginLoading = true;
+    const res = await UserLoginApi({ phoneNumber: phoneNumber.value, password: passWord.value });
+    console.log(res);
+    pinia.userLogin(res.data);
+    // 登录成功返回上一页
+    uni.navigateBack({ delta: 1 });
+    // 登录成功，立马获取对话列表数据和获取用户信息
+    const chatListData = await GetChatListApi();
+    pinia.chatListData = chatListData.data;
+    pinia.initUserFromStorage();
+  }
+  // 注册
+  if (loginMode.value == "登录") {
+    console.log("注册");
+    validators.isEqual(passWord.value, confirmPassword.value);
+    pinia.loginLoading = true;
+    await UserRegisterApi({
+      phoneNumber: phoneNumber.value,
+      password: passWord.value,
+      confirmPassword: confirmPassword.value,
+    });
+    // 切换回登录
+    loginMode.value = "注册";
   }
 };
 </script>
