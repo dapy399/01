@@ -48,10 +48,14 @@ const selectNav = (type: string) => {
 };
 // 初次进入该页面，获取对话列表
 onLoad(async () => {
-  const chatListData = await GetChatListApi();
-  console.log(chatListData);
-
-  pinia.chatListData = chatListData.data;
+  try {
+    const chatListData = await GetChatListApi();
+    console.log(chatListData);
+    pinia.chatListData = chatListData.data;
+  } catch (error) {
+    console.error("获取对话列表失败:", error);
+    pinia.chatListData = [];
+  }
 });
 </script>
 

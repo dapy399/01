@@ -24,9 +24,14 @@ const pinia = projectStore();
 import { useFileUploader } from "@/api/useFileUploader";
 // 获取知识库文件
 onLoad(async () => {
-  const res = await KbFileListApi();
-  console.log(res);
-  pinia.kbUploadFileItem = res.data;
+  try {
+    const res = await KbFileListApi();
+    console.log(res);
+    pinia.kbUploadFileItem = res.data;
+  } catch (error) {
+    console.error("获取知识库文件列表失败:", error);
+    pinia.kbUploadFileItem = [];
+  }
 });
 // 上传文件
 const uploadFile = async () => {

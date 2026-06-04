@@ -35,34 +35,40 @@ const passWord = ref("");
 const confirmPassword = ref("");
 // 登录注册
 const handleLoginRegister = async () => {
-  validators.isPhoneNumber(phoneNumber.value);
-  validators.isPasswordValid(passWord.value);
-  // 登录
-  if (loginMode.value == "注册") {
-    console.log("登录");
-    pinia.loginLoading = true;
-    const res = await UserLoginApi({ phoneNumber: phoneNumber.value, password: passWord.value });
-    console.log(res);
-    pinia.userLogin(res.data);
-    // 登录成功返回上一页
-    uni.navigateBack({ delta: 1 });
-    // 登录成功，立马获取对话列表数据和获取用户信息
-    const chatListData = await GetChatListApi();
-    pinia.chatListData = chatListData.data;
-    pinia.initUserFromStorage();
-  }
-  // 注册
-  if (loginMode.value == "登录") {
-    console.log("注册");
-    validators.isEqual(passWord.value, confirmPassword.value);
-    pinia.loginLoading = true;
-    await UserRegisterApi({
-      phoneNumber: phoneNumber.value,
-      password: passWord.value,
-      confirmPassword: confirmPassword.value,
-    });
-    // 切换回登录
-    loginMode.value = "注册";
+  try {
+    validators.isPhoneNumber(phoneNumber.value);
+    validators.isPasswordValid(passWord.value);
+    // 登录
+    if (loginMode.value == "注册") {
+      console.log("登录");
+      pinia.loginLoading = true;
+      const res = await UserLoginApi({ phoneNumber: phoneNumber.value, password: passWord.value });
+      console.log(res);
+      pinia.userLogin(res.data);
+      // 登录成功返回上一页
+      uni.navigateBack({ delta: 1 });
+      // 登录成功，立马获取对话列表数据和获取用户信息
+      const chatListData = await GetChatListApi();
+      pinia.chatListData = chatListData.data;
+      pinia.initUserFromStorage();
+    }
+    // 注册
+    if (loginMode.value == "登录") {
+      console.log("注册");
+      validators.isEqual(passWord.value, confirmPassword.value);
+      pinia.loginLoading = true;
+      await UserRegisterApi({
+        phoneNumber: phoneNumber.value,
+        password: passWord.value,
+        confirmPassword: confirmPassword.value,
+      });
+      // 切换回登录
+      loginMode.value = "注册";
+    }
+  } catch (error) {
+    console.error("登录/注册失败:", error);
+  } finally {
+    pinia.loginLoading = false;
   }
 };
 </script>

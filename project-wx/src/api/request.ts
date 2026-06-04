@@ -1,6 +1,7 @@
 const requestUrl = "http://121.43.149.193/api";
 import { projectStore } from "@/store/index";
-const project = projectStore();
+// 惰性获取 store 实例，避免模块加载时过早初始化
+const getProject = () => projectStore();
 import type {
   UserRegisterType,
   UserLoginType,
@@ -23,11 +24,11 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
       method,
       data,
       timeout: 10000,
-      header: { Authorization: "Bearer " + (project.userInfo?.token || "") },
+      header: { Authorization: "Bearer " + (getProject().userInfo?.token || "") },
       success: (res) => {
         const status = res.statusCode;
         // 取消登录注册时出现的loading
-        project.loginLoading = false;
+        getProject().loginLoading = false;
         switch (status) {
           case 200:
             resolve(res.data as T);
@@ -76,7 +77,7 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
           title: "网络请求失败，请检查网络",
         });
         // 取消登录注册时出现的loading
-        project.loginLoading = false;
+        getProject().loginLoading = false;
         reject(err);
       },
     });
@@ -91,12 +92,12 @@ export const SendMessageApi = (data: SendMessageType) => {
     method: "POST",
     data: data,
     enableChunked: true,
-    header: { Authorization: "Bearer " + project.userInfo?.token || "" },
+    header: { Authorization: "Bearer " + (getProject().userInfo?.token || "") },
     complete: (data: any) => {
       console.log(data);
       console.log("大模型回复完成");
       aiMessageObj.loadingCircle = false;
-      project.disabledStatus = false;
+      getProject().disabledStatus = false;
       if (data.statusCode == 401) {
         uni.navigateTo({ url: "/pages/userlogin/userlogin" });
       } else if (data.statusCode == 400) {
@@ -106,7 +107,7 @@ export const SendMessageApi = (data: SendMessageType) => {
       }
     },
   });
-  const aiMessageObj = project.messageList[project.messageList.length - 1];
+  const aiMessageObj = getProject().messageList[getProject().messageList.length - 1];
   (requestTask as any).onChunkReceived((response: { data: Uint8Array }) => {
     const chunk = new TextDecoder("utf-8").decode(new Uint8Array(response.data));
     let parts = chunk.split("###ABC###");
@@ -116,8 +117,8 @@ export const SendMessageApi = (data: SendMessageType) => {
       console.log(aiMessage);
       // 获得会话id
       if (aiMessage.role === "sessionId") {
-        project.sessionId = aiMessage.content;
-        project.chatListData[0].sessionId = aiMessage.content;
+        getProject().sessionId = aiMessage.content;
+        getProject().chatListData[0].sessionId = aiMessage.content;
       }
       // 获得文档或知识库的提示
       if (aiMessage.type) {

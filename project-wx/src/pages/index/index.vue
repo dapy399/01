@@ -47,9 +47,14 @@ const pinia = projectStore();
 
 const wxAppHomeData = ref<WxAppHomeType>([]);
 onLoad(async () => {
-  const res = await WxAppHomeApi();
-  console.log(res.data);
-  wxAppHomeData.value = res.data;
+  try {
+    const res = await WxAppHomeApi();
+    console.log(res.data);
+    wxAppHomeData.value = res.data;
+  } catch (error) {
+    console.error("获取首页数据失败:", error);
+    wxAppHomeData.value = [];
+  }
 });
 // 问一问
 const trigger = (value: string) => {
