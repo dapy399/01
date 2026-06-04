@@ -26,7 +26,7 @@
           <text v-for="(itemb, indexb) in item.readFileData.fileList" :key="indexb">{{ indexb + 1 + "." }}{{ itemb }}</text>
         </view>
       </view>
-      <towxml :nodes="appContext.$towxml(item.content, 'markdown')"></towxml>
+      <towxml class="ai-markdown" :nodes="appContext.$towxml(item.content, 'markdown')"></towxml>
       <!-- 联网搜索状态 -->
       <view class="web-search-status" v-if="item.webSearch">
         <text class="status-dot"></text>

@@ -43,12 +43,6 @@
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "探索",
-        "iconPath": "/static/tab/tansuo-a.png",
-        "selectedIconPath": "/static/tab/tansuo-b.png"
-      },
-      {
         "pagePath": "pages/chat/chat",
         "text": "问Ai",
         "iconPath": "/static/tab/wenai-a.png",
