@@ -1,38 +1,40 @@
 <template>
-  <block v-for="(item, index) in wxAppHomeData" :key="index">
-    <view class="main-content" v-if="item.type == 'list'">
-      <text class="section-title">{{ item.title }}</text>
-      <text class="section-description">{{ item.subtitle }}</text>
-      <view v-for="(itema, indexa) in item.data" :key="indexa" class="content-item" @click="trigger(itema.question)">
-        <view class="item-image">
-          <image :src="itema.cover" mode="aspectFill"></image>
-        </view>
-        <view class="item-details">
-          <text class="item-title">{{ itema.title }}</text>
-          <text class="item-description text-show">{{ itema.describe }}</text>
-          <view class="item-ask">
-            <image src="/static/wenyiwen.png"></image>
-            <text>问一问</text>
+  <view class="index-page">
+    <block v-for="(item, index) in wxAppHomeData" :key="index">
+      <view class="main-content" v-if="item.type == 'list'">
+        <text class="section-title">{{ item.title }}</text>
+        <text class="section-description">{{ item.subtitle }}</text>
+        <view v-for="(itema, indexa) in item.data" :key="indexa" class="content-item" @click="trigger(itema.question)">
+          <view class="item-image">
+            <image :src="itema.cover" mode="aspectFill"></image>
+          </view>
+          <view class="item-details">
+            <text class="item-title">{{ itema.title }}</text>
+            <text class="item-description text-show">{{ itema.describe }}</text>
+            <view class="item-ask">
+              <image src="/static/wenyiwen.png"></image>
+              <text>问一问</text>
+            </view>
           </view>
         </view>
       </view>
-    </view>
-    <!-- 单块 -->
-    <view class="single-block" v-if="item.type == 'single'" v-for="(itema, indexa) in item.data" :key="indexa" @click="trigger(itema.question)">
-      <view class="fengmian-image">
-        <image :src="itema.cover" mode="aspectFill"></image>
+      <!-- 单块 -->
+      <view class="single-block" v-if="item.type == 'single'" v-for="(itema, indexa) in item.data" :key="indexa" @click="trigger(itema.question)">
+        <view class="fengmian-image">
+          <image :src="itema.cover" mode="aspectFill"></image>
+        </view>
+        <view class="single-block-title">
+          <text>{{ itema.title }}</text>
+          <text>{{ itema.describe }}</text>
+        </view>
+        <view class="item-ask single-block-question">
+          <image src="/static/wenyiwen.png"></image>
+          <text>问一问</text>
+        </view>
       </view>
-      <view class="single-block-title">
-        <text>{{ itema.title }}</text>
-        <text>{{ itema.describe }}</text>
-      </view>
-      <view class="item-ask single-block-question">
-        <image src="/static/wenyiwen.png"></image>
-        <text>问一问</text>
-      </view>
-    </view>
-  </block>
-  <view style="height: 60rpx"></view>
+    </block>
+    <view style="height: 60rpx"></view>
+  </view>
 </template>
 
 <script setup lang="ts">

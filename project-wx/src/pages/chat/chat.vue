@@ -1,20 +1,22 @@
 <template>
-  <!-- 顶部导航切换 -->
-  <view class="menu-view">
-    <view class="button-top"></view>
-    <view class="menu-style">
-      <text v-for="(item, index) in menu" :key="index" @click="selectNav(item.type)" :class="{ active: (item.type == 'AA' && pinia.switchChat) || (item.type == 'BB' && !pinia.switchChat) }">{{ item.value }}</text>
+  <view class="chat-page">
+    <!-- 顶部导航切换 -->
+    <view class="menu-view">
+      <view class="button-top"></view>
+      <view class="menu-style">
+        <text v-for="(item, index) in menu" :key="index" @click="selectNav(item.type)" :class="{ active: (item.type == 'AA' && pinia.switchChat) || (item.type == 'BB' && !pinia.switchChat) }">{{ item.value }}</text>
+      </view>
     </view>
+    <view class="ment-view-height"></view>
+    <!-- 对话历史 -->
+    <ChatHistory v-show="pinia.switchChat"></ChatHistory>
+    <!-- 对话界面 -->
+    <ChatWindow v-if="!pinia.chatWelcome"></ChatWindow>
+    <!-- 底部输入框 -->
+    <ChatInput></ChatInput>
+    <!-- 欢迎页面 -->
+    <ChatWelcome v-if="pinia.chatWelcome"></ChatWelcome>
   </view>
-  <view class="ment-view-height"></view>
-  <!-- 对话历史 -->
-  <ChatHistory v-show="pinia.switchChat"></ChatHistory>
-  <!-- 对话界面 -->
-  <ChatWindow v-if="!pinia.chatWelcome"></ChatWindow>
-  <!-- 底部输入框 -->
-  <ChatInput></ChatInput>
-  <!-- 欢迎页面 -->
-  <ChatWelcome v-if="pinia.chatWelcome"></ChatWelcome>
 </template>
 
 <script setup lang="ts">

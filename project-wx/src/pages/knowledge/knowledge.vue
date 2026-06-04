@@ -1,16 +1,18 @@
 <template>
-  <view class="file-list" v-for="(item, index) in pinia.kbUploadFileItem" :key="index">
-    <image mode="widthFix" :src="item.fileType === 'DOCX' ? '/static/docx-icon.png' : '/static/pdf.icon.png'"></image>
-    <view class="file-title">
-      <text>{{ item.fileName }}</text>
-      <text>{{ item.fileSize }}</text>
+  <view class="knowledge-page">
+    <view class="file-list" v-for="(item, index) in pinia.kbUploadFileItem" :key="index">
+      <image mode="widthFix" :src="item.fileType === 'DOCX' ? '/static/docx-icon.png' : '/static/pdf.icon.png'"></image>
+      <view class="file-title">
+        <text>{{ item.fileName }}</text>
+        <text>{{ item.fileSize }}</text>
+      </view>
     </view>
+    <!-- 上传 -->
+    <view class="upload-file" @click="uploadFile">
+      <text>上传文件</text>
+    </view>
+    <view style="height: 120rpx"></view>
   </view>
-  <!-- 上传 -->
-  <view class="upload-file" @click="uploadFile">
-    <text>上传文件</text>
-  </view>
-  <view style="height: 120rpx"></view>
 </template>
 
 <script setup lang="ts">

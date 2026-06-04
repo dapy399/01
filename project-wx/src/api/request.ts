@@ -22,7 +22,8 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
       url: requestUrl + url,
       method,
       data,
-      header: { Authorization: "Bearer " + project.userInfo?.token || "" },
+      timeout: 10000,
+      header: { Authorization: "Bearer " + (project.userInfo?.token || "") },
       success: (res) => {
         const status = res.statusCode;
         // 取消登录注册时出现的loading
@@ -63,16 +64,20 @@ const request = <T>(url: string, method: "GET" | "POST", data?: any): Promise<T>
             });
             reject("422");
             break;
+          default:
+            reject(`请求失败，状态码: ${status}`);
+            break;
         }
       },
       fail: (err: any) => {
         console.log(err);
         uni.showToast({
           icon: "none",
-          title: "出现异常",
+          title: "网络请求失败，请检查网络",
         });
         // 取消登录注册时出现的loading
         project.loginLoading = false;
+        reject(err);
       },
     });
   });

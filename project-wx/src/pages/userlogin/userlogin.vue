@@ -1,18 +1,20 @@
 <template>
-  <text class="login-tips">登录体验更多AI功能</text>
-  <view class="login-view">
-    <image class="logo" mode="aspectFill" src="/static/logo.png"></image>
-    <view class="user-input">
-      <input type="number" v-model="phoneNumber" placeholder="请输入手机号码，会和pc端同步数据" />
+  <view class="userlogin-page">
+    <text class="login-tips">登录体验更多AI功能</text>
+    <view class="login-view">
+      <image class="logo" mode="aspectFill" src="/static/logo.png"></image>
+      <view class="user-input">
+        <input type="number" v-model="phoneNumber" placeholder="请输入手机号码，会和pc端同步数据" />
+      </view>
+      <view class="user-input">
+        <input type="text" password v-model="passWord" placeholder="请输入密码" />
+      </view>
+      <view class="user-input" v-if="loginMode === '登录'">
+        <input type="text" password v-model="confirmPassword" placeholder="再次输入密码" />
+      </view>
+      <text class="switch" @click="toggleLoginMode">{{ loginMode }}</text>
+      <button class="submit-button" :loading="pinia.loginLoading" @click="handleLoginRegister">{{ loginMode == "登录" ? "注册" : "登录" }}</button>
     </view>
-    <view class="user-input">
-      <input type="text" password v-model="passWord" placeholder="请输入密码" />
-    </view>
-    <view class="user-input" v-if="loginMode === '登录'">
-      <input type="text" password v-model="confirmPassword" placeholder="再次输入密码" />
-    </view>
-    <text class="switch" @click="toggleLoginMode">{{ loginMode }}</text>
-    <button class="submit-button" :loading="pinia.loginLoading" @click="handleLoginRegister">{{ loginMode == "登录" ? "注册" : "登录" }}</button>
   </view>
 </template>
 
